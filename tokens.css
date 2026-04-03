@@ -1,0 +1,723 @@
+/* =============================================================================
+   Design Tokens — Token and Typography / Grid
+   Source: Figma / AX_Test_1 (node: 15:42923, 18:44315)
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   1. Primitive (Atomic) Colors
+   ----------------------------------------------------------------------------- */
+:root {
+  /* Common */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Blue */
+  --color-blue-40: #0054d1;
+  --color-blue-45: #005eeb;
+  --color-blue-50: #0066ff;
+  --color-blue-60: #3385ff;
+
+  /* Cool Neutral */
+  --color-cool-neutral-10: #171719;
+  --color-cool-neutral-15: #1b1c1e;
+  --color-cool-neutral-50: #70737c;
+  --color-cool-neutral-70: #989ba2;
+  --color-cool-neutral-96: #e1e2e4;
+  --color-cool-neutral-97: #eaebec;
+  --color-cool-neutral-98: #f4f4f5;
+  --color-cool-neutral-99: #f7f7f8;
+
+  /* Neutral */
+  --color-neutral-20: #2a2a2a;
+  --color-neutral-22: #303030;
+  --color-neutral-30: #474747;
+  --color-neutral-60: #8a8a8a;
+
+  /* Green */
+  --color-green-40: #009632;
+  --color-green-50: #00bf40;
+
+  /* Orange */
+  --color-orange-39: #d17600;
+  --color-orange-50: #ff9200;
+
+  /* Red */
+  --color-red-40: #e52222;
+  --color-red-50: #ff4242;
+
+  /* Red Orange */
+  --color-red-orange-48: #f55a00;
+  --color-red-orange-50: #ff5e00;
+
+  /* Lime */
+  --color-lime-37: #429e00;
+  --color-lime-50: #58cf04;
+
+  /* Cyan */
+  --color-cyan-40: #0098b2;
+  --color-cyan-50: #00bdde;
+
+  /* Light Blue */
+  --color-light-blue-40: #008dcf;
+  --color-light-blue-50: #00aeff;
+
+  /* Violet */
+  --color-violet-45: #5b37ed;
+  --color-violet-50: #6541f2;
+
+  /* Purple */
+  --color-purple-40: #ad36e3;
+  --color-purple-50: #cb59ff;
+
+  /* Pink */
+  --color-pink-46: #e846cd;
+  --color-pink-50: #f553da;
+}
+
+/* -----------------------------------------------------------------------------
+   2. Semantic Colors
+   ----------------------------------------------------------------------------- */
+:root {
+  /* Label */
+  --color-label-strong: var(--color-black);
+  --color-label-normal: var(--color-cool-neutral-10);
+  --color-label-alternative: #37383c;
+  --color-label-neutral: rgba(46, 47, 51, 0.88);
+  --color-label-assistive: rgba(55, 56, 60, 0.28);
+  --color-label-disable: rgba(55, 56, 60, 0.16);
+
+  /* Static */
+  --color-static-white: var(--color-white);
+  --color-static-black: var(--color-black);
+
+  /* Primary */
+  --color-primary: var(--color-blue-50);
+  --color-primary-strong: var(--color-blue-45);
+  --color-primary-heavy: var(--color-blue-40);
+
+  /* Background */
+  --color-bg-normal: var(--color-white);
+  --color-bg-alternative: var(--color-cool-neutral-99);
+  --color-bg-elevated: var(--color-white);
+  --color-bg-elevated-alt: var(--color-cool-neutral-99);
+  --color-bg-transparent: rgba(255, 255, 255, 0.08);
+  --color-bg-transparent-alt: rgba(255, 255, 255, 0.28);
+
+  /* Interaction */
+  --color-interaction-inactive: var(--color-cool-neutral-70);
+  --color-interaction-disable: var(--color-cool-neutral-98);
+
+  /* Line */
+  --color-line-normal: rgba(112, 115, 124, 0.41);
+  --color-line-strong: rgba(112, 115, 124, 0.52);
+  --color-line-neutral: rgba(112, 115, 124, 0.16);
+  --color-line-alternative: rgba(112, 115, 124, 0.08);
+  --color-line-solid: var(--color-cool-neutral-96);
+  --color-line-solid-neutral: var(--color-cool-neutral-97);
+  --color-line-solid-alt: var(--color-cool-neutral-98);
+
+  /* Fill */
+  --color-fill-normal: rgba(112, 115, 124, 0.08);
+  --color-fill-alternative: rgba(112, 115, 124, 0.05);
+  --color-fill-strong: rgba(112, 115, 124, 0.16);
+
+  /* Material */
+  --color-material-dimmer: rgba(23, 23, 25, 0.52);
+
+  /* Inverse */
+  --color-inverse-primary: var(--color-blue-60);
+  --color-inverse-bg: var(--color-cool-neutral-15);
+  --color-inverse-label: var(--color-cool-neutral-99);
+
+  /* Status */
+  --color-status-positive: var(--color-green-50);
+  --color-status-cautionary: var(--color-orange-50);
+  --color-status-negative: var(--color-red-50);
+
+  /* Accent — Background */
+  --color-accent-bg-red-orange: var(--color-red-orange-50);
+  --color-accent-bg-lime: var(--color-lime-50);
+  --color-accent-bg-cyan: var(--color-cyan-50);
+  --color-accent-bg-light-blue: var(--color-light-blue-50);
+  --color-accent-bg-violet: var(--color-violet-50);
+  --color-accent-bg-purple: var(--color-purple-50);
+  --color-accent-bg-pink: var(--color-pink-50);
+
+  /* Accent — Foreground */
+  --color-accent-fg-red: var(--color-red-40);
+  --color-accent-fg-red-orange: var(--color-red-orange-48);
+  --color-accent-fg-orange: var(--color-orange-39);
+  --color-accent-fg-lime: var(--color-lime-37);
+  --color-accent-fg-green: var(--color-green-40);
+  --color-accent-fg-cyan: var(--color-cyan-40);
+  --color-accent-fg-light-blue: var(--color-light-blue-40);
+  --color-accent-fg-blue: var(--color-blue-45);
+  --color-accent-fg-violet: var(--color-violet-45);
+  --color-accent-fg-purple: var(--color-purple-40);
+  --color-accent-fg-pink: var(--color-pink-46);
+}
+
+/* -----------------------------------------------------------------------------
+   3. Shadow
+   ----------------------------------------------------------------------------- */
+:root {
+  --shadow-normal-xs: 0 1px 2px -1px rgba(23, 23, 23, 0.10);
+  --shadow-normal-sm: 0 4px 6px -1px rgba(23, 23, 23, 0.06), 0 2px 4px -2px rgba(23, 23, 23, 0.06);
+  --shadow-normal-md: 0 10px 15px -3px rgba(23, 23, 23, 0.07), 0 4px 6px -2px rgba(23, 23, 23, 0.07);
+  --shadow-normal-lg: 0 16px 24px -6px rgba(23, 23, 23, 0.08), 0 6px 10px -4px rgba(23, 23, 23, 0.08);
+  --shadow-normal-xl: 0 24px 38px -10px rgba(23, 23, 23, 0.12), 0 10px 15px -5px rgba(23, 23, 23, 0.10);
+  --shadow-spread-sm: 0 0 60px 0 rgba(23, 23, 23, 0.10);
+  --shadow-spread-md: 0 15px 75px 0 rgba(23, 23, 23, 0.16);
+}
+
+/* -----------------------------------------------------------------------------
+   4. Typography
+   Font Family: "Pretendard JP"
+   letter-spacing unit: px
+   ----------------------------------------------------------------------------- */
+:root {
+  --font-family-base: "Pretendard JP", sans-serif;
+
+  /* Display 1 — 56px */
+  --text-display-1-bold:    700 56px/1.286 var(--font-family-base);
+  --text-display-1-medium:  500 56px/1.286 var(--font-family-base);
+  --text-display-1-regular: 400 56px/1.286 var(--font-family-base);
+  --text-display-1-ls:      -3.19px;
+
+  /* Display 2 — 40px */
+  --text-display-2-bold:    700 40px/1.3 var(--font-family-base);
+  --text-display-2-medium:  500 40px/1.3 var(--font-family-base);
+  --text-display-2-regular: 400 40px/1.3 var(--font-family-base);
+  --text-display-2-ls:      -2.82px;
+
+  /* Display 3 — 36px */
+  --text-display-3-bold:    700 36px/1.334 var(--font-family-base);
+  --text-display-3-medium:  500 36px/1.334 var(--font-family-base);
+  --text-display-3-regular: 400 36px/1.334 var(--font-family-base);
+  --text-display-3-ls:      -2.7px;
+
+  /* Title 1 — 32px */
+  --text-title-1-bold:    700 32px/1.375 var(--font-family-base);
+  --text-title-1-medium:  500 32px/1.375 var(--font-family-base);
+  --text-title-1-regular: 400 32px/1.375 var(--font-family-base);
+  --text-title-1-ls:      -2.53px;
+
+  /* Title 2 — 28px */
+  --text-title-2-bold:    700 28px/1.358 var(--font-family-base);
+  --text-title-2-medium:  500 28px/1.358 var(--font-family-base);
+  --text-title-2-regular: 400 28px/1.358 var(--font-family-base);
+  --text-title-2-ls:      -2.36px;
+
+  /* Title 3 — 24px */
+  --text-title-3-bold:    700 24px/1.334 var(--font-family-base);
+  --text-title-3-medium:  500 24px/1.334 var(--font-family-base);
+  --text-title-3-regular: 400 24px/1.334 var(--font-family-base);
+  --text-title-3-ls:      -2.3px;
+
+  /* Heading 1 — 22px */
+  --text-heading-1-bold:    600 22px/1.364 var(--font-family-base);
+  --text-heading-1-medium:  500 22px/1.364 var(--font-family-base);
+  --text-heading-1-regular: 400 22px/1.364 var(--font-family-base);
+  --text-heading-1-ls:      -1.94px;
+
+  /* Heading 2 — 20px */
+  --text-heading-2-bold:    600 20px/1.4 var(--font-family-base);
+  --text-heading-2-medium:  500 20px/1.4 var(--font-family-base);
+  --text-heading-2-regular: 400 20px/1.4 var(--font-family-base);
+  --text-heading-2-ls:      -1.2px;
+
+  /* Headline 1 — 18px */
+  --text-headline-1-bold:    600 18px/1.445 var(--font-family-base);
+  --text-headline-1-medium:  500 18px/1.445 var(--font-family-base);
+  --text-headline-1-regular: 400 18px/1.445 var(--font-family-base);
+  --text-headline-1-ls:      -0.02px;
+
+  /* Headline 2 — 17px */
+  --text-headline-2-bold:    600 17px/1.412 var(--font-family-base);
+  --text-headline-2-medium:  500 17px/1.412 var(--font-family-base);
+  --text-headline-2-regular: 400 17px/1.412 var(--font-family-base);
+  --text-headline-2-ls:      0px;
+
+  /* Body 1 Normal — 16px / line-height 1.5 */
+  --text-body-1-normal-regular: 400 16px/1.5 var(--font-family-base);
+  --text-body-1-normal-medium:  500 16px/1.5 var(--font-family-base);
+  --text-body-1-normal-bold:    600 16px/1.5 var(--font-family-base);
+
+  /* Body 1 Reading — 16px / line-height 1.625 */
+  --text-body-1-reading-regular: 400 16px/1.625 var(--font-family-base);
+  --text-body-1-reading-medium:  500 16px/1.625 var(--font-family-base);
+  --text-body-1-reading-bold:    600 16px/1.625 var(--font-family-base);
+  --text-body-1-ls:              0.57px;
+
+  /* Body 2 Normal — 15px / line-height 1.467 */
+  --text-body-2-normal-regular: 400 15px/1.467 var(--font-family-base);
+  --text-body-2-normal-medium:  500 15px/1.467 var(--font-family-base);
+  --text-body-2-normal-bold:    600 15px/1.467 var(--font-family-base);
+
+  /* Body 2 Reading — 15px / line-height 1.6 */
+  --text-body-2-reading-regular: 400 15px/1.6 var(--font-family-base);
+  --text-body-2-reading-medium:  500 15px/1.6 var(--font-family-base);
+  --text-body-2-reading-bold:    600 15px/1.6 var(--font-family-base);
+  --text-body-2-ls:              0.96px;
+
+  /* Label 1 Normal — 14px / line-height 1.429 */
+  --text-label-1-normal-bold:    600 14px/1.429 var(--font-family-base);
+  --text-label-1-normal-medium:  500 14px/1.429 var(--font-family-base);
+  --text-label-1-normal-regular: 400 14px/1.429 var(--font-family-base);
+
+  /* Label 1 Reading — 14px / line-height 1.571 */
+  --text-label-1-reading-bold:    600 14px/1.571 var(--font-family-base);
+  --text-label-1-reading-medium:  500 14px/1.571 var(--font-family-base);
+  --text-label-1-reading-regular: 400 14px/1.571 var(--font-family-base);
+  --text-label-1-ls:              1.45px;
+
+  /* Label 2 — 13px */
+  --text-label-2-regular: 400 13px/1.385 var(--font-family-base);
+  --text-label-2-bold:    600 13px/1.385 var(--font-family-base);
+  --text-label-2-ls:      1.94px;
+
+  /* Caption 1 — 12px */
+  --text-caption-1-regular: 400 12px/1.334 var(--font-family-base);
+  --text-caption-1-medium:  500 12px/1.334 var(--font-family-base);
+  --text-caption-1-bold:    600 12px/1.334 var(--font-family-base);
+  --text-caption-1-ls:      2.52px;
+
+  /* Caption 2 — 11px */
+  --text-caption-2-regular: 400 11px/1.273 var(--font-family-base);
+  --text-caption-2-medium:  500 11px/1.273 var(--font-family-base);
+  --text-caption-2-bold:    600 11px/1.273 var(--font-family-base);
+  --text-caption-2-ls:      3.11px;
+}
+
+/* -----------------------------------------------------------------------------
+   5. Breakpoint
+   ----------------------------------------------------------------------------- */
+:root {
+  --breakpoint-xs: 0px;      /* ~767px    모바일 */
+  --breakpoint-sm: 768px;    /* ~991px    태블릿 세로 */
+  --breakpoint-md: 992px;    /* ~1199px   태블릿 가로 */
+  --breakpoint-lg: 1200px;   /* ~1599px   데스크톱 */
+  --breakpoint-xl: 1600px;   /*  1600px+  대형 데스크톱 */
+}
+
+/* -----------------------------------------------------------------------------
+   6. Spacing (4px base scale)
+   0.5 / 1 / 2px — 시각 보정용 / 4px 단위 — 기본 간격
+   ----------------------------------------------------------------------------- */
+:root {
+  --spacing-0-5: 0.5px;
+  --spacing-1:   1px;
+  --spacing-2:   2px;
+  --spacing-4:   4px;
+  --spacing-6:   6px;
+  --spacing-8:   8px;
+  --spacing-10:  10px;
+  --spacing-12:  12px;
+  --spacing-14:  14px;
+  --spacing-16:  16px;
+  --spacing-20:  20px;
+  --spacing-24:  24px;
+  --spacing-32:  32px;
+  --spacing-40:  40px;
+  --spacing-48:  48px;
+  --spacing-56:  56px;
+}
+
+/* -----------------------------------------------------------------------------
+   7. Layout — Column Grid
+   Gutter: 20px / Margin: 20px (전 브레이크포인트 공통)
+   ----------------------------------------------------------------------------- */
+:root {
+  --grid-gutter: 20px;
+  --grid-margin: 20px;
+
+  /* xs — 모바일 (<768px): 2컬럼, fluid */
+  --grid-columns-xs:       2;
+  --grid-container-max-xs: 100%;
+
+  /* sm/md — 태블릿 (768px~): 3컬럼, fluid */
+  --grid-columns-sm:       3;
+  --grid-container-max-sm: 100%;
+
+  /* lg — 데스크톱 (1200px~): 12컬럼, max 1100px */
+  --grid-columns-lg:       12;
+  --grid-container-max-lg: 1100px;
+
+  /* xl — 대형 데스크톱 (1600px~): 12컬럼, max 1440px */
+  --grid-columns-xl:       12;
+  --grid-container-max-xl: 1440px;
+}
+
+/* -----------------------------------------------------------------------------
+   8. Icon
+   실제 아이콘: 24×24px / 표시 프레임: 64×64px (패딩 20px)
+   카테고리: normal | color | navigation
+   ----------------------------------------------------------------------------- */
+:root {
+  --icon-size:  24px;
+  --icon-frame: 64px;
+}
+
+/* -----------------------------------------------------------------------------
+   9. Divider
+   variant: Normal(1px) | Thick(12px)  /  vertical: false(가로) | true(세로)
+   ----------------------------------------------------------------------------- */
+:root {
+  --divider-thin:  1px;
+  --divider-thick: 12px;
+}
+
+/* -----------------------------------------------------------------------------
+   10. Action — Button / Chip / Toggle Icon / Action Area
+   ----------------------------------------------------------------------------- */
+
+/* Button (variant: Solid|Outlined / color: Primary|Assistive) */
+:root {
+  --button-height-lg: 48px;
+  --button-height-md: 40px;
+  --button-height-sm: 32px;
+
+  --button-icon-only-lg: 48px;   /* width = height (정사각형) */
+  --button-icon-only-md: 40px;
+  --button-icon-only-sm: 32px;
+}
+
+/* Button/Text (color: Primary|Assistive) */
+:root {
+  --button-text-height-md: 32px;
+  --button-text-height-sm: 28px;
+}
+
+/* Button/Icon */
+:root {
+  --button-icon-normal-size:     24px;   /* Normal, Background */
+  --button-icon-outlined-md:     40px;
+  --button-icon-outlined-sm:     32px;
+  --button-icon-outlined-custom: 28px;
+  /* Solid 타입은 Outlined와 동일 사이즈 */
+}
+
+/* Chip (variant: Outlined|Solid) */
+:root {
+  --chip-width-lg:  68px;
+  --chip-height-lg: 40px;
+  --chip-width-md:  66px;
+  --chip-height-md: 36px;
+  --chip-width-sm:  57px;
+  --chip-height-sm: 32px;
+  --chip-width-xs:  48px;
+  --chip-height-xs: 24px;
+}
+
+/* Control/Toggle Icon */
+:root {
+  --toggle-icon-size: 24px;
+}
+
+/* Action Area */
+:root {
+  --action-area-height-default: 102px;   /* extra=false */
+  --action-area-height-extra:   198px;   /* extra=true  */
+}
+
+/* =============================================================================
+   11. Selection and Input
+   ============================================================================= */
+
+/* Textfield — status: Normal|Positive|Negative */
+:root {
+  --textfield-width:  335px;
+  --textfield-height: 100px;
+
+  /* Trailing Content */
+  --textfield-trailing-normal-width:    80px;
+  --textfield-trailing-normal-height:   48px;
+  --textfield-trailing-icon-size:       24px;   /* Custom, Icon, IconButton */
+  --textfield-trailing-text-width:      36px;
+  --textfield-trailing-timer-width:     40px;
+  --textfield-trailing-badge-width:     44px;
+  --textfield-trailing-button-width:    50px;
+  --textfield-trailing-content-height:  24px;   /* text/timer/badge/button 공통 */
+}
+
+/* Textarea — resize: Normal|Limit|Fixed */
+:root {
+  --textarea-width:        335px;
+  --textarea-height-fluid: 138px;   /* resize=Normal|Limit */
+  --textarea-height-fixed: 190px;   /* resize=Fixed */
+
+  /* Trailing Content */
+  --textarea-trailing-counter-width:      55px;
+  --textarea-trailing-counter-height:     18px;
+  --textarea-trailing-button-width:       50px;
+  --textarea-trailing-button-height:      24px;
+  --textarea-trailing-icon-normal-size:   24px;
+  --textarea-trailing-icon-primary-size:  32px;
+}
+
+/* Select — render: Text|Chip */
+:root {
+  --select-width:  335px;
+  --select-height: 76px;
+}
+
+/* Checkbox — size: Medium|Small */
+:root {
+  --checkbox-width:     335px;
+  --checkbox-height-md: 24px;
+  --checkbox-height-sm: 20px;
+}
+
+/* Radio — size: Normal|Small / tight: false|true */
+:root {
+  --radio-normal-size:        24px;   /* tight=false */
+  --radio-small-size:         20px;   /* tight=false */
+  --radio-normal-tight-w:     20px;   /* tight=true */
+  --radio-normal-tight-h:     24px;
+  --radio-small-tight-w:      16px;   /* tight=true */
+  --radio-small-tight-h:      20px;
+}
+
+/* Check Mark — size: Medium */
+:root {
+  --check-mark-width:  335px;
+  --check-mark-height: 24px;
+}
+
+/* Switch — platform: Normal|iOS / size: Medium|Small */
+:root {
+  --switch-width-md:  52px;
+  --switch-height-md: 32px;
+  --switch-width-sm:  39px;
+  --switch-height-sm: 24px;
+}
+
+/* Segmented Control — size: Medium|Small */
+:root {
+  --segmented-control-width-md:  52px;
+  --segmented-control-height-md: 32px;
+  --segmented-control-width-sm:  39px;
+  --segmented-control-height-sm: 24px;
+}
+
+/* Framed Style — variant: Solid|Outlined / size: Large|Medium|Small */
+:root {
+  --framed-style-width:     335px;
+  --framed-style-height-lg: 48px;
+  --framed-style-height-md: 40px;
+  --framed-style-height-sm: 32px;
+
+  /* Slot 타입 */
+  --framed-style-slot-width:           280px;
+  --framed-style-slot-custom-height:   64px;
+  --framed-style-slot-checkbox-height: 70px;
+  --framed-style-slot-radio-height:    48px;
+
+  /* Selected 상태 */
+  --framed-style-selected-width:  367px;
+  --framed-style-selected-height: 72px;
+}
+
+/* =============================================================================
+   12. Content
+   ============================================================================= */
+
+/* Icons — 콘텐츠용 반응형 사이즈 */
+:root {
+  --content-icon-xlarge: 24px;
+  --content-icon-large:  32px;
+  --content-icon-medium: 28px;
+  --content-icon-small:  20px;
+  --content-icon-xsmall: 16px;
+}
+
+/* Content Badge — variant: Solid|Outlined / color: Neutral|Accent */
+:root {
+  --content-badge-width-xs:  42px;
+  --content-badge-height-xs: 20px;
+  --content-badge-width-sm:  44px;
+  --content-badge-height-sm: 24px;
+  --content-badge-width-md:  51px;
+  --content-badge-height-md: 28px;
+}
+
+/* Thumbnail — radius: false|true */
+:root {
+  --thumbnail-size: 240px;
+}
+
+/* Avatar — variant: Person|Company|Academy */
+:root {
+  --avatar-size-xs: 24px;
+  --avatar-size-sm: 32px;
+  --avatar-size-md: 40px;
+  --avatar-size-lg: 48px;
+  --avatar-size-xl: 56px;
+  --avatar-badge-size: 24px;   /* Default|Official|Deactivate|원티드 */
+}
+
+/* Avatar Group — variant: Person|Company|Academy */
+:root {
+  --avatar-group-width-xs:  96px;
+  --avatar-group-height-xs: 24px;
+  --avatar-group-width-sm:  128px;
+  --avatar-group-height-sm: 32px;
+  --avatar-group-trailing-width:  38px;
+  --avatar-group-trailing-height: 28px;
+}
+
+/* List Cell — verticalPadding: None|Small|Medium|Large */
+:root {
+  --list-cell-width-default:   335px;
+  --list-cell-width-fill:      375px;
+  --list-cell-height-none:     24px;
+  --list-cell-height-small:    40px;
+  --list-cell-height-medium:   48px;
+  --list-cell-height-large:    56px;
+}
+
+/* Card — platform: Desktop|Mobile */
+:root {
+  --card-width-desktop:  240px;
+  --card-height-desktop: 214px;
+  --card-width-mobile:   152px;
+  --card-height-mobile:  164px;
+  --card-top-content-width:  152px;
+  --card-top-content-height: 20px;
+  --card-save-size: 24px;
+}
+
+/* Card/List Card */
+:root {
+  --card-list-leading-size:  24px;
+  --card-list-trailing-size: 24px;
+}
+
+/* =============================================================================
+   13. Loading
+   ============================================================================= */
+
+/* Circular Loader */
+:root {
+  --loading-circular-wanted-size: 32px;
+  --loading-circular-size:        28px;
+}
+
+/* Skeleton */
+:root {
+  --loading-skeleton-text-height:   22px;
+  --loading-skeleton-rect-size:     64px;
+  --loading-skeleton-circle-size:   64px;
+}
+
+/* =============================================================================
+   14. Navigation
+   ============================================================================= */
+
+/* Tab */
+:root {
+  --tab-height-small:   40px;
+  --tab-height-medium:  48px;
+  --tab-height-large:   56px;
+  --tab-width-default:  335px;
+  --tab-width-padding:  375px;
+}
+
+/* Category */
+:root {
+  --category-height-small:   24px;
+  --category-height-medium:  32px;
+  --category-height-large:   36px;
+  --category-height-xlarge:  40px;
+  --category-width-default:  335px;
+  --category-width-padding:  375px;
+}
+
+/* Page Indicator / Counter */
+:root {
+  --page-indicator-width-small:   52px;
+  --page-indicator-height-small:  26px;
+  --page-indicator-width-medium:  62px;
+  --page-indicator-height-medium: 34px;
+}
+
+/* Pagination — Dots */
+:root {
+  --pagination-dots-width-small:   48px;
+  --pagination-dots-height-small:  6px;
+  --pagination-dots-width-medium:  84px;
+  --pagination-dots-height-medium: 10px;
+}
+
+/* Pagination — Navigation */
+:root {
+  --pagination-nav-width-extended:  760px;
+  --pagination-nav-height-extended: 32px;
+  --pagination-nav-width-compact:   335px;
+  --pagination-nav-height-compact:  32px;
+  --pagination-nav-width-minimize:  66px;
+  --pagination-nav-height-minimize: 18px;
+}
+
+/* =============================================================================
+   15. Feedback
+   ============================================================================= */
+
+/* Toast */
+:root {
+  --toast-width:  335px;
+  --toast-height: 54px;
+}
+
+/* Snackbar */
+:root {
+  --snackbar-width:  335px;
+  --snackbar-height: 54px;
+}
+
+/* Alert */
+:root {
+  --alert-width-ios:     375px;
+  --alert-height-ios:    812px;
+  --alert-width-android: 360px;
+  --alert-height-android:800px;
+  --alert-width-web:     375px;
+  --alert-height-web:    635px;
+}
+
+/* Alert — Action */
+:root {
+  --alert-action-width:  60px;
+  --alert-action-height: 32px;
+}
+
+/* =============================================================================
+   16. Presentation
+   ============================================================================= */
+
+/* Tooltip */
+:root {
+  --tooltip-medium-bottom-top-width:  171px;
+  --tooltip-medium-bottom-top-height: 44px;
+  --tooltip-medium-left-right-width:  179px;
+  --tooltip-medium-left-right-height: 36px;
+  --tooltip-small-bottom-top-width:   36px;
+  --tooltip-small-bottom-top-height:  30px;
+  --tooltip-small-left-right-width:   42px;
+  --tooltip-small-left-right-height:  24px;
+}
+
+/* Menu */
+:root {
+  --menu-width:  320px;
+  --menu-height: 416px;
+}
+
+/* Menu — Item Cell */
+:root {
+  --menu-item-width:             280px;
+  --menu-item-height-pad12:      48px;
+  --menu-item-height-pad12-caption: 70px;
+  --menu-item-height-pad8:       40px;
+  --menu-item-height-pad8-caption:  62px;
+}

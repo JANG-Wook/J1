@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AX Design Tokens Viewer</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Pretendard JP", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f7f7f8;
+    color: #171719;
+    font-size: 13px;
+  }
+
+  /* ── Layout ── */
+  .sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 220px; height: 100vh;
+    background: #1b1c1e; color: #e1e2e4;
+    overflow-y: auto; padding: 20px 0;
+    z-index: 100;
+  }
+  .sidebar h1 { font-size: 13px; font-weight: 700; color: #fff; padding: 0 20px 16px; border-bottom: 1px solid #303030; }
+  .sidebar h1 span { display: block; font-size: 10px; font-weight: 400; color: #70737c; margin-top: 2px; }
+  .sidebar nav a {
+    display: block; padding: 8px 20px; font-size: 12px; color: #989ba2;
+    text-decoration: none; transition: background 0.15s, color 0.15s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active { background: #303030; color: #fff; }
+  .sidebar nav .group { padding: 12px 20px 4px; font-size: 10px; font-weight: 600; color: #474747; letter-spacing: 1px; text-transform: uppercase; }
+
+  .main { margin-left: 220px; padding: 40px; }
+  .section { margin-bottom: 64px; }
+  .section-title {
+    font-size: 22px; font-weight: 700; color: #171719;
+    border-bottom: 2px solid #e1e2e4; padding-bottom: 12px; margin-bottom: 24px;
+  }
+  .sub-title { font-size: 14px; font-weight: 600; color: #37383c; margin: 24px 0 12px; }
+
+  /* ── Search ── */
+  .search-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: #f7f7f8; padding: 12px 0 20px;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .search-bar input {
+    flex: 1; padding: 8px 14px; border: 1px solid #e1e2e4; border-radius: 8px;
+    font-size: 13px; background: #fff; outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-bar input:focus { border-color: #0066ff; }
+  .search-bar .count { font-size: 12px; color: #70737c; white-space: nowrap; }
+
+  /* ── Color Grid ── */
+  .color-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .color-swatch {
+    width: 80px; cursor: default;
+    border-radius: 8px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    background: #fff;
+  }
+  .color-swatch .preview { height: 48px; width: 100%; }
+  .color-swatch .info { padding: 6px; }
+  .color-swatch .name { font-size: 9px; color: #70737c; word-break: break-all; line-height: 1.4; }
+  .color-swatch .value { font-size: 10px; font-weight: 600; color: #171719; margin-top: 2px; }
+
+  /* ── Semantic Color Rows ── */
+  .semantic-list { display: flex; flex-direction: column; gap: 6px; }
+  .semantic-row {
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border-radius: 8px; padding: 8px 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .semantic-row .dot { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); }
+  .semantic-row .var-name { font-size: 12px; font-weight: 500; color: #37383c; min-width: 260px; }
+  .semantic-row .ref { font-size: 11px; color: #70737c; }
+
+  /* ── Typography ── */
+  .typo-list { display: flex; flex-direction: column; gap: 1px; }
+  .typo-row {
+    display: grid; grid-template-columns: 200px 1fr 80px 80px;
+    align-items: center; gap: 12px;
+    background: #fff; padding: 12px 16px;
+    border-radius: 4px;
+  }
+  .typo-row:hover { background: #f4f4f5; }
+  .typo-row .label { font-size: 11px; color: #70737c; }
+  .typo-row .preview-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .typo-row .size-val { font-size: 11px; color: #989ba2; text-align: right; }
+
+  /* ── Shadow ── */
+  .shadow-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .shadow-card {
+    width: 140px; height: 90px; background: #fff; border-radius: 12px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; cursor: default;
+  }
+  .shadow-card .label { font-size: 11px; color: #70737c; }
+
+  /* ── Token Table ── */
+  .token-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .token-table th { background: #f4f4f5; font-size: 11px; font-weight: 600; color: #70737c; text-align: left; padding: 8px 14px; }
+  .token-table td { padding: 8px 14px; font-size: 12px; border-top: 1px solid #f4f4f5; vertical-align: middle; }
+  .token-table td:first-child { font-family: monospace; color: #0054d1; font-size: 11px; }
+  .token-table td .val { font-weight: 600; }
+  .size-bar { display: inline-flex; align-items: center; gap: 8px; }
+  .size-rect { background: #0066ff22; border: 1px solid #0066ff44; border-radius: 2px; display: inline-block; }
+
+  /* ── JS Export Cards ── */
+  .export-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .export-card {
+    background: #fff; border-radius: 12px; padding: 16px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .export-card h3 { font-size: 13px; font-weight: 700; color: #0054d1; margin-bottom: 10px; font-family: monospace; }
+  .export-card .prop-row { display: flex; gap: 8px; font-size: 11px; padding: 4px 0; border-bottom: 1px solid #f4f4f5; align-items: flex-start; }
+  .export-card .prop-row:last-child { border-bottom: none; }
+  .export-card .prop-key { color: #70737c; min-width: 100px; flex-shrink: 0; font-weight: 500; }
+  .export-card .prop-vals { color: #37383c; display: flex; flex-wrap: wrap; gap: 4px; }
+  .export-card .tag {
+    display: inline-block; padding: 1px 6px; border-radius: 4px;
+    background: #f4f4f5; font-size: 10px; color: #37383c;
+  }
+  .export-card .tag.bool-true { background: #e6f4ea; color: #009632; }
+  .export-card .tag.bool-false { background: #f4f4f5; color: #70737c; }
+  .size-info { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f4f4f5; font-size: 11px; color: #70737c; }
+  .size-info strong { color: #37383c; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; background: #e8f0fe; color: #0054d1; margin-bottom: 12px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <h1>AX Tokens <span>AX_Test_1 · Figma</span></h1>
+  <nav>
+    <div class="group">Color</div>
+    <a href="#primitive">1. Primitive</a>
+    <a href="#semantic">2. Semantic</a>
+    <div class="group">Foundation</div>
+    <a href="#shadow">3. Shadow</a>
+    <a href="#typography">4. Typography</a>
+    <a href="#breakpoint">5. Breakpoint</a>
+    <a href="#spacing">6. Spacing</a>
+    <a href="#grid">7. Grid</a>
+    <div class="group">Component</div>
+    <a href="#icon">8. Icon</a>
+    <a href="#divider">9. Divider</a>
+    <a href="#action">10. Action</a>
+    <a href="#input">11. Selection / Input</a>
+    <a href="#content">12. Content</a>
+    <a href="#loading">13. Loading</a>
+    <a href="#navigation">14. Navigation</a>
+    <a href="#feedback">15. Feedback</a>
+    <a href="#presentation">16. Presentation</a>
+    <div class="group">JS Exports</div>
+    <a href="#js-exports">50 Exports</a>
+  </nav>
+</aside>
+
+<main class="main">
+
+  <!-- Search -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="변수명 또는 값으로 검색... (예: --color-blue, 48px)" oninput="filterTokens(this.value)">
+    <span class="count" id="searchCount"></span>
+  </div>
+
+  <!-- 1. Primitive Colors -->
+  <section class="section" id="primitive">
+    <h2 class="section-title">1. Primitive Colors</h2>
+    <div class="color-grid" id="primitiveGrid">
+      <!-- Common -->
+      <div class="color-swatch"><div class="preview" style="background:#ffffff;border:1px solid #e1e2e4"></div><div class="info"><div class="name">--color-white</div><div class="value">#ffffff</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#000000"></div><div class="info"><div class="name">--color-black</div><div class="value">#000000</div></div></div>
+      <!-- Blue -->
+      <div class="color-swatch"><div class="preview" style="background:#0054d1"></div><div class="info"><div class="name">--color-blue-40</div><div class="value">#0054d1</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#005eeb"></div><div class="info"><div class="name">--color-blue-45</div><div class="value">#005eeb</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#0066ff"></div><div class="info"><div class="name">--color-blue-50</div><div class="value">#0066ff</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#3385ff"></div><div class="info"><div class="name">--color-blue-60</div><div class="value">#3385ff</div></div></div>
+      <!-- Cool Neutral -->
+      <div class="color-swatch"><div class="preview" style="background:#171719"></div><div class="info"><div class="name">--color-cool-neutral-10</div><div class="value">#171719</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#1b1c1e"></div><div class="info"><div class="name">--color-cool-neutral-15</div><div class="value">#1b1c1e</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#70737c"></div><div class="info"><div class="name">--color-cool-neutral-50</div><div class="value">#70737c</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#989ba2"></div><div class="info"><div class="name">--color-cool-neutral-70</div><div class="value">#989ba2</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#e1e2e4"></div><div class="info"><div class="name">--color-cool-neutral-96</div><div class="value">#e1e2e4</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#eaebec"></div><div class="info"><div class="name">--color-cool-neutral-97</div><div class="value">#eaebec</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#f4f4f5"></div><div class="info"><div class="name">--color-cool-neutral-98</div><div class="value">#f4f4f5</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#f7f7f8"></div><div class="info"><div class="name">--color-cool-neutral-99</div><div class="value">#f7f7f8</div></div></div>
+      <!-- Neutral -->
+      <div class="color-swatch"><div class="preview" style="background:#2a2a2a"></div><div class="info"><div class="name">--color-neutral-20</div><div class="value">#2a2a2a</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#303030"></div><div class="info"><div class="name">--color-neutral-22</div><div class="value">#303030</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#474747"></div><div class="info"><div class="name">--color-neutral-30</div><div class="value">#474747</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#8a8a8a"></div><div class="info"><div class="name">--color-neutral-60</div><div class="value">#8a8a8a</div></div></div>
+      <!-- Status -->
+      <div class="color-swatch"><div class="preview" style="background:#009632"></div><div class="info"><div class="name">--color-green-40</div><div class="value">#009632</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#00bf40"></div><div class="info"><div class="name">--color-green-50</div><div class="value">#00bf40</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#d17600"></div><div class="info"><div class="name">--color-orange-39</div><div class="value">#d17600</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#ff9200"></div><div class="info"><div class="name">--color-orange-50</div><div class="value">#ff9200</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#e52222"></div><div class="info"><div class="name">--color-red-40</div><div class="value">#e52222</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#ff4242"></div><div class="info"><div class="name">--color-red-50</div><div class="value">#ff4242</div></div></div>
+      <!-- Accent -->
+      <div class="color-swatch"><div class="preview" style="background:#f55a00"></div><div class="info"><div class="name">--color-red-orange-48</div><div class="value">#f55a00</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#ff5e00"></div><div class="info"><div class="name">--color-red-orange-50</div><div class="value">#ff5e00</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#429e00"></div><div class="info"><div class="name">--color-lime-37</div><div class="value">#429e00</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#58cf04"></div><div class="info"><div class="name">--color-lime-50</div><div class="value">#58cf04</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#0098b2"></div><div class="info"><div class="name">--color-cyan-40</div><div class="value">#0098b2</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#00bdde"></div><div class="info"><div class="name">--color-cyan-50</div><div class="value">#00bdde</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#008dcf"></div><div class="info"><div class="name">--color-light-blue-40</div><div class="value">#008dcf</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#00aeff"></div><div class="info"><div class="name">--color-light-blue-50</div><div class="value">#00aeff</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#5b37ed"></div><div class="info"><div class="name">--color-violet-45</div><div class="value">#5b37ed</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#6541f2"></div><div class="info"><div class="name">--color-violet-50</div><div class="value">#6541f2</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#ad36e3"></div><div class="info"><div class="name">--color-purple-40</div><div class="value">#ad36e3</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#cb59ff"></div><div class="info"><div class="name">--color-purple-50</div><div class="value">#cb59ff</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#e846cd"></div><div class="info"><div class="name">--color-pink-46</div><div class="value">#e846cd</div></div></div>
+      <div class="color-swatch"><div class="preview" style="background:#f553da"></div><div class="info"><div class="name">--color-pink-50</div><div class="value">#f553da</div></div></div>
+    </div>
+  </section>
+
+  <!-- 2. Semantic Colors -->
+  <section class="section" id="semantic">
+    <h2 class="section-title">2. Semantic Colors</h2>
+    <div class="semantic-list">
+      <div class="semantic-row"><div class="dot" style="background:var(--color-label-strong)"></div><span class="var-name">--color-label-strong</span><span class="ref">var(--color-black) → #000000</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-label-normal)"></div><span class="var-name">--color-label-normal</span><span class="ref">var(--color-cool-neutral-10) → #171719</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-label-alternative)"></div><span class="var-name">--color-label-alternative</span><span class="ref">#37383c</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-label-neutral)"></div><span class="var-name">--color-label-neutral</span><span class="ref">rgba(46,47,51,0.88)</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-label-assistive)"></div><span class="var-name">--color-label-assistive</span><span class="ref">rgba(55,56,60,0.28)</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-label-disable);border:1px solid #e1e2e4"></div><span class="var-name">--color-label-disable</span><span class="ref">rgba(55,56,60,0.16)</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-primary)"></div><span class="var-name">--color-primary</span><span class="ref">var(--color-blue-50) → #0066ff</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-primary-strong)"></div><span class="var-name">--color-primary-strong</span><span class="ref">var(--color-blue-45) → #005eeb</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-primary-heavy)"></div><span class="var-name">--color-primary-heavy</span><span class="ref">var(--color-blue-40) → #0054d1</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-bg-normal);border:1px solid #e1e2e4"></div><span class="var-name">--color-bg-normal</span><span class="ref">var(--color-white) → #ffffff</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-bg-alternative)"></div><span class="var-name">--color-bg-alternative</span><span class="ref">var(--color-cool-neutral-99) → #f7f7f8</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-status-positive)"></div><span class="var-name">--color-status-positive</span><span class="ref">var(--color-green-50) → #00bf40</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-status-cautionary)"></div><span class="var-name">--color-status-cautionary</span><span class="ref">var(--color-orange-50) → #ff9200</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-status-negative)"></div><span class="var-name">--color-status-negative</span><span class="ref">var(--color-red-50) → #ff4242</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-red-orange)"></div><span class="var-name">--color-accent-bg-red-orange</span><span class="ref">#ff5e00</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-lime)"></div><span class="var-name">--color-accent-bg-lime</span><span class="ref">#58cf04</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-cyan)"></div><span class="var-name">--color-accent-bg-cyan</span><span class="ref">#00bdde</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-light-blue)"></div><span class="var-name">--color-accent-bg-light-blue</span><span class="ref">#00aeff</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-violet)"></div><span class="var-name">--color-accent-bg-violet</span><span class="ref">#6541f2</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-purple)"></div><span class="var-name">--color-accent-bg-purple</span><span class="ref">#cb59ff</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-bg-pink)"></div><span class="var-name">--color-accent-bg-pink</span><span class="ref">#f553da</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-fg-red)"></div><span class="var-name">--color-accent-fg-red</span><span class="ref">#e52222</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-fg-orange)"></div><span class="var-name">--color-accent-fg-orange</span><span class="ref">#d17600</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-fg-green)"></div><span class="var-name">--color-accent-fg-green</span><span class="ref">#009632</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-accent-fg-blue)"></div><span class="var-name">--color-accent-fg-blue</span><span class="ref">#005eeb</span></div>
+      <div class="semantic-row"><div class="dot" style="background:var(--color-inverse-bg)"></div><span class="var-name">--color-inverse-bg</span><span class="ref">var(--color-cool-neutral-15) → #1b1c1e</span></div>
+    </div>
+  </section>
+
+  <!-- 3. Shadow -->
+  <section class="section" id="shadow">
+    <h2 class="section-title">3. Shadow</h2>
+    <div class="shadow-grid">
+      <div class="shadow-card" style="box-shadow:var(--shadow-normal-xs)"><div class="label">normal-xs</div></div>
+      <div class="shadow-card" style="box-shadow:var(--shadow-normal-sm)"><div class="label">normal-sm</div></div>
+      <div class="shadow-card" style="box-shadow:var(--shadow-normal-md)"><div class="label">normal-md</div></div>
+      <div class="shadow-card" style="box-shadow:var(--shadow-normal-lg)"><div class="label">normal-lg</div></div>
+      <div class="shadow-card" style="box-shadow:var(--shadow-normal-xl)"><div class="label">normal-xl</div></div>
+      <div class="shadow-card" style="box-shadow:var(--shadow-spread-sm)"><div class="label">spread-sm</div></div>
+      <div class="shadow-card" style="box-shadow:var(--shadow-spread-md)"><div class="label">spread-md</div></div>
+    </div>
+  </section>
+
+  <!-- 4. Typography -->
+  <section class="section" id="typography">
+    <h2 class="section-title">4. Typography</h2>
+    <div class="typo-list">
+      <div class="typo-row"><span class="label">display-1-bold</span><span class="preview-text" style="font:var(--text-display-1-bold)">가나다 AaBb</span><span class="size-val">56px</span><span class="size-val">700</span></div>
+      <div class="typo-row"><span class="label">display-2-bold</span><span class="preview-text" style="font:var(--text-display-2-bold)">가나다 AaBb</span><span class="size-val">40px</span><span class="size-val">700</span></div>
+      <div class="typo-row"><span class="label">display-3-bold</span><span class="preview-text" style="font:var(--text-display-3-bold)">가나다 AaBb</span><span class="size-val">36px</span><span class="size-val">700</span></div>
+      <div class="typo-row"><span class="label">title-1-bold</span><span class="preview-text" style="font:var(--text-title-1-bold)">가나다 AaBb</span><span class="size-val">32px</span><span class="size-val">700</span></div>
+      <div class="typo-row"><span class="label">title-2-bold</span><span class="preview-text" style="font:var(--text-title-2-bold)">가나다 AaBb</span><span class="size-val">28px</span><span class="size-val">700</span></div>
+      <div class="typo-row"><span class="label">title-3-bold</span><span class="preview-text" style="font:var(--text-title-3-bold)">가나다 AaBb</span><span class="size-val">24px</span><span class="size-val">700</span></div>
+      <div class="typo-row"><span class="label">heading-1-bold</span><span class="preview-text" style="font:var(--text-heading-1-bold)">가나다 AaBb</span><span class="size-val">22px</span><span class="size-val">600</span></div>
+      <div class="typo-row"><span class="label">heading-2-bold</span><span class="preview-text" style="font:var(--text-heading-2-bold)">가나다 AaBb</span><span class="size-val">20px</span><span class="size-val">600</span></div>
+      <div class="typo-row"><span class="label">headline-1-bold</span><span class="preview-text" style="font:var(--text-headline-1-bold)">가나다 AaBb</span><span class="size-val">18px</span><span class="size-val">600</span></div>
+      <div class="typo-row"><span class="label">headline-2-bold</span><span class="preview-text" style="font:var(--text-headline-2-bold)">가나다 AaBb</span><span class="size-val">17px</span><span class="size-val">600</span></div>
+      <div class="typo-row"><span class="label">body-1-normal-regular</span><span class="preview-text" style="font:var(--text-body-1-normal-regular)">가나다 AaBb 본문 텍스트입니다.</span><span class="size-val">16px</span><span class="size-val">400</span></div>
+      <div class="typo-row"><span class="label">body-1-normal-medium</span><span class="preview-text" style="font:var(--text-body-1-normal-medium)">가나다 AaBb 본문 텍스트입니다.</span><span class="size-val">16px</span><span class="size-val">500</span></div>
+      <div class="typo-row"><span class="label">body-2-normal-regular</span><span class="preview-text" style="font:var(--text-body-2-normal-regular)">가나다 AaBb 본문 텍스트입니다.</span><span class="size-val">15px</span><span class="size-val">400</span></div>
+      <div class="typo-row"><span class="label">label-1-normal-bold</span><span class="preview-text" style="font:var(--text-label-1-normal-bold)">가나다 AaBb Label</span><span class="size-val">14px</span><span class="size-val">600</span></div>
+      <div class="typo-row"><span class="label">label-1-normal-medium</span><span class="preview-text" style="font:var(--text-label-1-normal-medium)">가나다 AaBb Label</span><span class="size-val">14px</span><span class="size-val">500</span></div>
+      <div class="typo-row"><span class="label">label-2-regular</span><span class="preview-text" style="font:var(--text-label-2-regular)">가나다 AaBb Label</span><span class="size-val">13px</span><span class="size-val">400</span></div>
+      <div class="typo-row"><span class="label">caption-1-regular</span><span class="preview-text" style="font:var(--text-caption-1-regular)">가나다 AaBb Caption</span><span class="size-val">12px</span><span class="size-val">400</span></div>
+      <div class="typo-row"><span class="label">caption-2-regular</span><span class="preview-text" style="font:var(--text-caption-2-regular)">가나다 AaBb Caption</span><span class="size-val">11px</span><span class="size-val">400</span></div>
+    </div>
+  </section>
+
+  <!-- 5. Breakpoint -->
+  <section class="section" id="breakpoint">
+    <h2 class="section-title">5. Breakpoint</h2>
+    <table class="token-table">
+      <thead><tr><th>변수</th><th>값</th><th>용도</th></tr></thead>
+      <tbody>
+        <tr><td>--breakpoint-xs</td><td class="val">0px</td><td>모바일 (~767px)</td></tr>
+        <tr><td>--breakpoint-sm</td><td class="val">768px</td><td>태블릿 세로 (~991px)</td></tr>
+        <tr><td>--breakpoint-md</td><td class="val">992px</td><td>태블릿 가로 (~1199px)</td></tr>
+        <tr><td>--breakpoint-lg</td><td class="val">1200px</td><td>데스크톱 (~1599px)</td></tr>
+        <tr><td>--breakpoint-xl</td><td class="val">1600px</td><td>대형 데스크톱</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 6. Spacing -->
+  <section class="section" id="spacing">
+    <h2 class="section-title">6. Spacing</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+      <div style="text-align:center" title="--spacing-0-5"><div style="width:0.5px;height:0.5px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">0.5px</div></div>
+      <div style="text-align:center" title="--spacing-1"><div style="width:1px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">1px</div></div>
+      <div style="text-align:center" title="--spacing-2"><div style="width:2px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">2px</div></div>
+      <div style="text-align:center" title="--spacing-4"><div style="width:4px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">4px</div></div>
+      <div style="text-align:center" title="--spacing-6"><div style="width:6px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">6px</div></div>
+      <div style="text-align:center" title="--spacing-8"><div style="width:8px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">8px</div></div>
+      <div style="text-align:center" title="--spacing-10"><div style="width:10px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">10px</div></div>
+      <div style="text-align:center" title="--spacing-12"><div style="width:12px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">12px</div></div>
+      <div style="text-align:center" title="--spacing-14"><div style="width:14px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">14px</div></div>
+      <div style="text-align:center" title="--spacing-16"><div style="width:16px;height:16px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">16px</div></div>
+      <div style="text-align:center" title="--spacing-20"><div style="width:20px;height:20px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">20px</div></div>
+      <div style="text-align:center" title="--spacing-24"><div style="width:24px;height:24px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">24px</div></div>
+      <div style="text-align:center" title="--spacing-32"><div style="width:32px;height:32px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">32px</div></div>
+      <div style="text-align:center" title="--spacing-40"><div style="width:40px;height:40px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">40px</div></div>
+      <div style="text-align:center" title="--spacing-48"><div style="width:48px;height:48px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">48px</div></div>
+      <div style="text-align:center" title="--spacing-56"><div style="width:56px;height:56px;background:#0066ff;display:inline-block"></div><div style="font-size:9px;color:#70737c;margin-top:4px">56px</div></div>
+    </div>
+  </section>
+
+  <!-- 7. Grid -->
+  <section class="section" id="grid">
+    <h2 class="section-title">7. Grid</h2>
+    <table class="token-table">
+      <thead><tr><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>--grid-gutter</td><td class="val">20px</td></tr>
+        <tr><td>--grid-margin</td><td class="val">20px</td></tr>
+        <tr><td>--grid-columns-xs</td><td class="val">2 columns (모바일)</td></tr>
+        <tr><td>--grid-columns-sm</td><td class="val">3 columns (태블릿)</td></tr>
+        <tr><td>--grid-columns-lg</td><td class="val">12 columns, max 1100px</td></tr>
+        <tr><td>--grid-columns-xl</td><td class="val">12 columns, max 1440px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8. Icon -->
+  <section class="section" id="icon">
+    <h2 class="section-title">8. Icon</h2>
+    <table class="token-table">
+      <thead><tr><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>--icon-size</td><td class="val">24px (실제 아이콘)</td></tr>
+        <tr><td>--icon-frame</td><td class="val">64px (표시 프레임, padding 20px)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 9. Divider -->
+  <section class="section" id="divider">
+    <h2 class="section-title">9. Divider</h2>
+    <div style="background:#fff;padding:24px;border-radius:12px;display:flex;flex-direction:column;gap:20px;">
+      <div>
+        <div style="font-size:11px;color:#70737c;margin-bottom:8px">--divider-thin · 1px</div>
+        <div style="height:1px;background:#e1e2e4;width:100%"></div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#70737c;margin-bottom:8px">--divider-thick · 12px</div>
+        <div style="height:12px;background:#f4f4f5;width:100%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Action -->
+  <section class="section" id="action">
+    <h2 class="section-title">10. Action Components</h2>
+
+    <div class="sub-title">Button</div>
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+      <div style="text-align:center"><div style="width:120px;height:48px;background:#0066ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600">Large</div><div style="font-size:10px;color:#70737c;margin-top:4px">48px</div></div>
+      <div style="text-align:center"><div style="width:120px;height:40px;background:#0066ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600">Medium</div><div style="font-size:10px;color:#70737c;margin-top:4px">40px</div></div>
+      <div style="text-align:center"><div style="width:120px;height:32px;background:#0066ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600">Small</div><div style="font-size:10px;color:#70737c;margin-top:4px">32px</div></div>
+    </div>
+
+    <div class="sub-title">Chip</div>
+    <table class="token-table">
+      <thead><tr><th>Size</th><th>Width</th><th>Height</th></tr></thead>
+      <tbody>
+        <tr><td>Large</td><td class="val">68px</td><td class="val">40px</td></tr>
+        <tr><td>Medium</td><td class="val">66px</td><td class="val">36px</td></tr>
+        <tr><td>Small</td><td class="val">57px</td><td class="val">32px</td></tr>
+        <tr><td>XSmall</td><td class="val">48px</td><td class="val">24px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 11. Selection & Input -->
+  <section class="section" id="input">
+    <h2 class="section-title">11. Selection &amp; Input</h2>
+    <table class="token-table">
+      <thead><tr><th>컴포넌트</th><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>Textfield</td><td>width / height</td><td class="val">335px / 100px</td></tr>
+        <tr><td>Textarea</td><td>width / height-fluid / height-fixed</td><td class="val">335px / 138px / 190px</td></tr>
+        <tr><td>Select</td><td>width / height</td><td class="val">335px / 76px</td></tr>
+        <tr><td>Checkbox</td><td>width / height-md / height-sm</td><td class="val">335px / 24px / 20px</td></tr>
+        <tr><td>Radio</td><td>normal / small</td><td class="val">24px / 20px</td></tr>
+        <tr><td>Switch</td><td>md / sm</td><td class="val">52×32px / 39×24px</td></tr>
+        <tr><td>Segmented Control</td><td>md / sm</td><td class="val">52×32px / 39×24px</td></tr>
+        <tr><td>Framed Style</td><td>height lg/md/sm</td><td class="val">48px / 40px / 32px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 12. Content -->
+  <section class="section" id="content">
+    <h2 class="section-title">12. Content</h2>
+    <table class="token-table">
+      <thead><tr><th>컴포넌트</th><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>Content Icon</td><td>xlarge/large/medium/small/xsmall</td><td class="val">24/32/28/20/16px</td></tr>
+        <tr><td>Content Badge</td><td>xs/sm/md</td><td class="val">42×20 / 44×24 / 51×28px</td></tr>
+        <tr><td>Thumbnail</td><td>size</td><td class="val">240px</td></tr>
+        <tr><td>Avatar</td><td>xs/sm/md/lg/xl</td><td class="val">24/32/40/48/56px</td></tr>
+        <tr><td>Avatar Group</td><td>xs/sm</td><td class="val">96×24 / 128×32px</td></tr>
+        <tr><td>List Cell</td><td>height none/sm/md/lg</td><td class="val">24/40/48/56px</td></tr>
+        <tr><td>Card</td><td>desktop / mobile</td><td class="val">240×214 / 152×164px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 13. Loading -->
+  <section class="section" id="loading">
+    <h2 class="section-title">13. Loading</h2>
+    <table class="token-table">
+      <thead><tr><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>--loading-circular-wanted-size</td><td class="val">32px</td></tr>
+        <tr><td>--loading-circular-size</td><td class="val">28px</td></tr>
+        <tr><td>--loading-skeleton-text-height</td><td class="val">22px</td></tr>
+        <tr><td>--loading-skeleton-rect-size</td><td class="val">64px</td></tr>
+        <tr><td>--loading-skeleton-circle-size</td><td class="val">64px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 14. Navigation -->
+  <section class="section" id="navigation">
+    <h2 class="section-title">14. Navigation</h2>
+    <table class="token-table">
+      <thead><tr><th>컴포넌트</th><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>Tab</td><td>height sm/md/lg</td><td class="val">40/48/56px</td></tr>
+        <tr><td>Tab</td><td>width default/padding</td><td class="val">335/375px</td></tr>
+        <tr><td>Category</td><td>height sm/md/lg/xl</td><td class="val">24/32/36/40px</td></tr>
+        <tr><td>Page Indicator</td><td>small / medium</td><td class="val">52×26 / 62×34px</td></tr>
+        <tr><td>Pagination Dots</td><td>small / medium</td><td class="val">48×6 / 84×10px</td></tr>
+        <tr><td>Pagination Nav</td><td>extended/compact/minimize</td><td class="val">760×32 / 335×32 / 66×18px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 15. Feedback -->
+  <section class="section" id="feedback">
+    <h2 class="section-title">15. Feedback</h2>
+    <table class="token-table">
+      <thead><tr><th>컴포넌트</th><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>Toast</td><td>width / height</td><td class="val">335×54px</td></tr>
+        <tr><td>Snackbar</td><td>width / height</td><td class="val">335×54px</td></tr>
+        <tr><td>Alert</td><td>iOS / Android / Web</td><td class="val">375×812 / 360×800 / 375×635px</td></tr>
+        <tr><td>Alert Action</td><td>width / height</td><td class="val">60×32px</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 16. Presentation -->
+  <section class="section" id="presentation">
+    <h2 class="section-title">16. Presentation</h2>
+    <table class="token-table">
+      <thead><tr><th>컴포넌트</th><th>변수</th><th>값</th></tr></thead>
+      <tbody>
+        <tr><td>Tooltip Medium</td><td>Bottom/Top</td><td class="val">171×44px</td></tr>
+        <tr><td>Tooltip Medium</td><td>Left/Right</td><td class="val">179×36px</td></tr>
+        <tr><td>Tooltip Small</td><td>Bottom/Top</td><td class="val">36×30px</td></tr>
+        <tr><td>Tooltip Small</td><td>Left/Right</td><td class="val">42×24px</td></tr>
+        <tr><td>Menu</td><td>width / height</td><td class="val">320×416px</td></tr>
+        <tr><td>Menu Item</td><td>12px pad / 8px pad</td><td class="val">48px(+caption:70) / 40px(+caption:62)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- JS Exports -->
+  <section class="section" id="js-exports">
+    <h2 class="section-title">JS Exports (50개)</h2>
+    <div class="export-grid" id="exportGrid">
+
+      <!-- colorPrimitive -->
+      <div class="export-card"><span class="badge">1. Primitive</span><h3>colorPrimitive</h3>
+        <div class="prop-row"><span class="prop-key">white/black</span><span class="prop-vals"><span class="tag">#ffffff</span><span class="tag">#000000</span></span></div>
+        <div class="prop-row"><span class="prop-key">blue</span><span class="prop-vals"><span class="tag">40/45/50/60</span></span></div>
+        <div class="prop-row"><span class="prop-key">coolNeutral</span><span class="prop-vals"><span class="tag">10/15/50/70/96/97/98/99</span></span></div>
+        <div class="prop-row"><span class="prop-key">accent colors</span><span class="prop-vals"><span class="tag">green/orange/red/lime/cyan/lightBlue/violet/purple/pink</span></span></div>
+      </div>
+
+      <!-- colorSemantic -->
+      <div class="export-card"><span class="badge">2. Semantic</span><h3>colorSemantic</h3>
+        <div class="prop-row"><span class="prop-key">label</span><span class="prop-vals"><span class="tag">strong</span><span class="tag">normal</span><span class="tag">alternative</span><span class="tag">neutral</span><span class="tag">assistive</span><span class="tag">disable</span></span></div>
+        <div class="prop-row"><span class="prop-key">bg</span><span class="prop-vals"><span class="tag">normal</span><span class="tag">alternative</span><span class="tag">elevated</span><span class="tag">transparent</span></span></div>
+        <div class="prop-row"><span class="prop-key">status</span><span class="prop-vals"><span class="tag">positive</span><span class="tag">cautionary</span><span class="tag">negative</span></span></div>
+        <div class="prop-row"><span class="prop-key">accent bg/fg</span><span class="prop-vals"><span class="tag">7 bg + 11 fg</span></span></div>
+      </div>
+
+      <!-- shadow -->
+      <div class="export-card"><span class="badge">3. Shadow</span><h3>shadow</h3>
+        <div class="prop-row"><span class="prop-key">normal</span><span class="prop-vals"><span class="tag">xs</span><span class="tag">sm</span><span class="tag">md</span><span class="tag">lg</span><span class="tag">xl</span></span></div>
+        <div class="prop-row"><span class="prop-key">spread</span><span class="prop-vals"><span class="tag">sm</span><span class="tag">md</span></span></div>
+      </div>
+
+      <!-- typography -->
+      <div class="export-card"><span class="badge">4. Typography</span><h3>typography</h3>
+        <div class="prop-row"><span class="prop-key">scales</span><span class="prop-vals"><span class="tag">display1/2/3</span><span class="tag">title1/2/3</span><span class="tag">heading1/2</span><span class="tag">headline1/2</span><span class="tag">body1/2</span><span class="tag">label1/2</span><span class="tag">caption1/2</span></span></div>
+        <div class="prop-row"><span class="prop-key">weights</span><span class="prop-vals"><span class="tag">regular</span><span class="tag">medium</span><span class="tag">bold</span></span></div>
+      </div>
+
+      <!-- breakpoint -->
+      <div class="export-card"><span class="badge">5. Breakpoint</span><h3>breakpoint</h3>
+        <div class="prop-row"><span class="prop-key">sizes</span><span class="prop-vals"><span class="tag">xs:0</span><span class="tag">sm:768</span><span class="tag">md:992</span><span class="tag">lg:1200</span><span class="tag">xl:1600</span></span></div>
+      </div>
+
+      <!-- spacing -->
+      <div class="export-card"><span class="badge">6. Spacing</span><h3>spacing</h3>
+        <div class="prop-row"><span class="prop-key">scale</span><span class="prop-vals"><span class="tag">0.5/1/2/4/6/8/10/12/14/16/20/24/32/40/48/56</span></span></div>
+      </div>
+
+      <!-- grid -->
+      <div class="export-card"><span class="badge">7. Grid</span><h3>grid</h3>
+        <div class="prop-row"><span class="prop-key">gutter/margin</span><span class="prop-vals"><span class="tag">20px</span></span></div>
+        <div class="prop-row"><span class="prop-key">columns</span><span class="prop-vals"><span class="tag">xs:2</span><span class="tag">sm:3</span><span class="tag">lg/xl:12</span></span></div>
+      </div>
+
+      <!-- icon -->
+      <div class="export-card"><span class="badge">8. Icon</span><h3>icon</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">24px</span></span></div>
+        <div class="prop-row"><span class="prop-key">frame</span><span class="prop-vals"><span class="tag">64px</span></span></div>
+        <div class="prop-row"><span class="prop-key">catalog</span><span class="prop-vals"><span class="tag">name → {category, thick, small, tight}</span></span></div>
+      </div>
+
+      <!-- divider -->
+      <div class="export-card"><span class="badge">9. Divider</span><h3>divider</h3>
+        <div class="prop-row"><span class="prop-key">props.variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Thick</span></span></div>
+        <div class="prop-row"><span class="prop-key">props.vertical</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Normal:1px / Thick:12px</span></span></div>
+      </div>
+
+      <!-- button -->
+      <div class="export-card"><span class="badge">10. Action</span><h3>button</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Solid</span><span class="tag">Outlined</span></span></div>
+        <div class="prop-row"><span class="prop-key">color</span><span class="prop-vals"><span class="tag">Primary</span><span class="tag">Assistive</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Large</span><span class="tag">Medium</span><span class="tag">Small</span></span></div>
+        <div class="prop-row"><span class="prop-key">iconOnly/disable</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+        <div class="size-info">height — Large:<strong>48px</strong> / Medium:<strong>40px</strong> / Small:<strong>32px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">10. Action</span><h3>buttonText</h3>
+        <div class="prop-row"><span class="prop-key">color</span><span class="prop-vals"><span class="tag">Primary</span><span class="tag">Assistive</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Medium</span><span class="tag">Small</span></span></div>
+        <div class="size-info">height — Medium:<strong>32px</strong> / Small:<strong>28px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">10. Action</span><h3>buttonIcon</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Background</span><span class="tag">Outlined</span><span class="tag">Solid</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Medium</span><span class="tag">Small</span><span class="tag">Custom</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">10. Action</span><h3>chip</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Outlined</span><span class="tag">Solid</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Large</span><span class="tag">Medium</span><span class="tag">Small</span><span class="tag">XSmall</span></span></div>
+        <div class="size-info">L:68×40 / M:66×36 / S:57×32 / XS:48×24px</div>
+      </div>
+
+      <div class="export-card"><span class="badge">10. Action</span><h3>toggleIcon</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">24px</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">10. Action</span><h3>actionArea</h3>
+        <div class="prop-row"><span class="prop-key">extra</span><span class="prop-vals"><span class="tag bool-false">false → 102px</span><span class="tag bool-true">true → 198px</span></span></div>
+      </div>
+
+      <!-- input -->
+      <div class="export-card"><span class="badge">11. Input</span><h3>textfield</h3>
+        <div class="prop-row"><span class="prop-key">status</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Positive</span><span class="tag">Negative</span></span></div>
+        <div class="prop-row"><span class="prop-key">trailingContent</span><span class="prop-vals"><span class="tag">None</span><span class="tag">Icon</span><span class="tag">Text</span><span class="tag">Timer</span><span class="tag">Badge</span><span class="tag">Button</span></span></div>
+        <div class="size-info"><strong>335×100px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>textarea</h3>
+        <div class="prop-row"><span class="prop-key">resize</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Limit</span><span class="tag">Fixed</span></span></div>
+        <div class="size-info">335×138px (fluid) / 335×190px (fixed)</div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>select</h3>
+        <div class="prop-row"><span class="prop-key">render</span><span class="prop-vals"><span class="tag">Text</span><span class="tag">Chip</span></span></div>
+        <div class="size-info"><strong>335×76px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>checkbox</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Medium:24px</span><span class="tag">Small:20px</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>radio</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Normal:24px</span><span class="tag">Small:20px</span></span></div>
+        <div class="prop-row"><span class="prop-key">tight</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>switchControl</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Medium: 52×32px</span><span class="tag">Small: 39×24px</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>segmentedControl</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Medium: 52×32px</span><span class="tag">Small: 39×24px</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">11. Input</span><h3>framedStyle</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Solid</span><span class="tag">Outlined</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Large:48px</span><span class="tag">Medium:40px</span><span class="tag">Small:32px</span></span></div>
+      </div>
+
+      <!-- content -->
+      <div class="export-card"><span class="badge">12. Content</span><h3>contentIcon</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">XLarge:24</span><span class="tag">Large:32</span><span class="tag">Medium:28</span><span class="tag">Small:20</span><span class="tag">XSmall:16</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">12. Content</span><h3>contentBadge</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Solid</span><span class="tag">Outlined</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">XS:42×20</span><span class="tag">SM:44×24</span><span class="tag">MD:51×28</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">12. Content</span><h3>avatar</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Person</span><span class="tag">Company</span><span class="tag">Academy</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">xs:24</span><span class="tag">sm:32</span><span class="tag">md:40</span><span class="tag">lg:48</span><span class="tag">xl:56</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">12. Content</span><h3>listCell</h3>
+        <div class="prop-row"><span class="prop-key">verticalPadding</span><span class="prop-vals"><span class="tag">None:24px</span><span class="tag">Small:40px</span><span class="tag">Medium:48px</span><span class="tag">Large:56px</span></span></div>
+        <div class="prop-row"><span class="prop-key">width</span><span class="prop-vals"><span class="tag">default:335</span><span class="tag">fill:375</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">12. Content</span><h3>card</h3>
+        <div class="prop-row"><span class="prop-key">platform</span><span class="prop-vals"><span class="tag">Desktop:240×214</span><span class="tag">Mobile:152×164</span></span></div>
+      </div>
+
+      <!-- loading -->
+      <div class="export-card"><span class="badge">13. Loading</span><h3>loadingCircular</h3>
+        <div class="prop-row"><span class="prop-key">wanted</span><span class="prop-vals"><span class="tag">animate false/true</span><span class="tag">32px</span></span></div>
+        <div class="prop-row"><span class="prop-key">circular</span><span class="prop-vals"><span class="tag">animate false/true</span><span class="tag">28px</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">13. Loading</span><h3>skeleton</h3>
+        <div class="prop-row"><span class="prop-key">text</span><span class="prop-vals"><span class="tag">color:Normal|White</span><span class="tag">length:100%|75%|50%|25%</span><span class="tag">align:Leading|Center|Trailing</span></span></div>
+        <div class="prop-row"><span class="prop-key">rectangle</span><span class="prop-vals"><span class="tag">color:Normal|White</span><span class="tag">64px</span></span></div>
+        <div class="prop-row"><span class="prop-key">circle</span><span class="prop-vals"><span class="tag">color:Normal|White</span><span class="tag">64px</span></span></div>
+      </div>
+
+      <!-- navigation -->
+      <div class="export-card"><span class="badge">14. Navigation</span><h3>tab</h3>
+        <div class="prop-row"><span class="prop-key">resize</span><span class="prop-vals"><span class="tag">Hug</span><span class="tag">Fill</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Small:40</span><span class="tag">Medium:48</span><span class="tag">Large:56</span></span></div>
+        <div class="prop-row"><span class="prop-key">hPadding/scroll/trailingIcon</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">14. Navigation</span><h3>category</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Alternative</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">S:24</span><span class="tag">M:32</span><span class="tag">L:36</span><span class="tag">XL:40</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">14. Navigation</span><h3>pageIndicator</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Small:52×26</span><span class="tag">Medium:62×34</span></span></div>
+        <div class="prop-row"><span class="prop-key">alternative</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">14. Navigation</span><h3>paginationDots</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">White</span></span></div>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Small:48×6</span><span class="tag">Medium:84×10</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">14. Navigation</span><h3>paginationNav</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Extended:760×32</span><span class="tag">Compact:335×32</span><span class="tag">Minimize:66×18</span></span></div>
+      </div>
+
+      <!-- feedback -->
+      <div class="export-card"><span class="badge">15. Feedback</span><h3>toast</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Positive</span><span class="tag">Cautionary</span><span class="tag">Negative</span></span></div>
+        <div class="prop-row"><span class="prop-key">leadingIcon/customize</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+        <div class="size-info"><strong>335×54px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">15. Feedback</span><h3>snackbar</h3>
+        <div class="prop-row"><span class="prop-key">heading/description/icon/closeButton</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+        <div class="size-info"><strong>335×54px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">15. Feedback</span><h3>alert</h3>
+        <div class="prop-row"><span class="prop-key">platform</span><span class="prop-vals"><span class="tag">iOS:375×812</span><span class="tag">Android:360×800</span><span class="tag">Web:375×635</span></span></div>
+      </div>
+
+      <div class="export-card"><span class="badge">15. Feedback</span><h3>alertAction</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Assistive</span><span class="tag">Negative</span></span></div>
+        <div class="size-info"><strong>60×32px</strong></div>
+      </div>
+
+      <!-- presentation -->
+      <div class="export-card"><span class="badge">16. Presentation</span><h3>tooltip</h3>
+        <div class="prop-row"><span class="prop-key">size</span><span class="prop-vals"><span class="tag">Small</span><span class="tag">Medium</span></span></div>
+        <div class="prop-row"><span class="prop-key">position</span><span class="prop-vals"><span class="tag">Bottom</span><span class="tag">Top</span><span class="tag">Left</span><span class="tag">Right</span></span></div>
+        <div class="prop-row"><span class="prop-key">arrowAlign</span><span class="prop-vals"><span class="tag">Left/Center/Right/Top/Bottom</span></span></div>
+        <div class="size-info">M Bottom/Top:171×44 · M Left/Right:179×36<br>S Bottom/Top:36×30 · S Left/Right:42×24</div>
+      </div>
+
+      <div class="export-card"><span class="badge">16. Presentation</span><h3>menu</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Radio</span><span class="tag">Checkbox</span></span></div>
+        <div class="prop-row"><span class="prop-key">cellPadding</span><span class="prop-vals"><span class="tag">8px</span><span class="tag">12px</span></span></div>
+        <div class="size-info"><strong>320×416px</strong></div>
+      </div>
+
+      <div class="export-card"><span class="badge">16. Presentation</span><h3>menuItem</h3>
+        <div class="prop-row"><span class="prop-key">variant</span><span class="prop-vals"><span class="tag">Normal</span><span class="tag">Checkbox</span><span class="tag">Radio</span></span></div>
+        <div class="prop-row"><span class="prop-key">verticalPadding</span><span class="prop-vals"><span class="tag">8px</span><span class="tag">12px</span></span></div>
+        <div class="prop-row"><span class="prop-key">active/caption/disable</span><span class="prop-vals"><span class="tag bool-false">false</span><span class="tag bool-true">true</span></span></div>
+        <div class="size-info">w:280 · 12px:48(+caption:70) · 8px:40(+caption:62)px</div>
+      </div>
+
+    </div><!-- /export-grid -->
+  </section>
+
+</main>
+
+<script>
+  // Sidebar active link
+  const sections = document.querySelectorAll('.section');
+  const links = document.querySelectorAll('.sidebar nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+    links.forEach(a => {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    });
+  }, { passive: true });
+
+  // Search
+  function filterTokens(q) {
+    q = q.toLowerCase().trim();
+    const cards = document.querySelectorAll('.export-card, .color-swatch, .semantic-row, .token-table tr, .typo-row');
+    let count = 0;
+    cards.forEach(el => {
+      const text = el.textContent.toLowerCase();
+      const match = !q || text.includes(q);
+      el.classList.toggle('hidden', !match);
+      if (match) count++;
+    });
+    document.getElementById('searchCount').textContent = q ? `${count}개 매칭` : '';
+  }
+</script>
+
+</body>
+</html>
