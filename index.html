@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1600">
+<title>원티드 — 개발자를 위한 취업 플랫폼</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendardJP.min.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* ── Reset & Base ────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Pretendard JP", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #ffffff;
+  color: #171719;
+  min-width: 1200px;
+}
+a { text-decoration: none; color: inherit; cursor: pointer; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+img { display: block; }
+
+/* ── GNB ─────────────────────────────────────────── */
+.gnb {
+  position: sticky; top: 0; z-index: 100;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(112,115,124,0.16);
+  height: 60px;
+}
+.gnb-inner {
+  max-width: 1440px; margin: 0 auto; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 100%;
+}
+.gnb-leading { display: flex; align-items: center; gap: 64px; }
+
+/* Logo */
+.gnb-logo { display: flex; align-items: center; height: 32px; gap: 4px; }
+.gnb-logo-symbol { height: 32px; width: auto; }
+.gnb-logo-type   { height: 22px; width: auto; }
+
+/* Nav */
+.gnb-nav { display: flex; align-items: center; gap: 40px; }
+.gnb-nav-item {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 15px; font-weight: 600; color: #171719;
+  letter-spacing: -0.09px; white-space: nowrap;
+}
+.gnb-nav-icon { width: 20px; height: 20px; }
+
+/* Trailing */
+.gnb-trailing { display: flex; align-items: center; gap: 20px; }
+.gnb-actions  { display: flex; align-items: center; gap: 16px; }
+.gnb-icon-btn { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
+.gnb-icon-btn img { width: 24px; height: 24px; }
+.gnb-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1px solid rgba(112,115,124,0.08);
+  overflow: hidden;
+}
+.gnb-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.gnb-corp-btn {
+  height: 32px; padding: 0 14px;
+  border: 1px solid rgba(112,115,124,0.16); border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: #171719;
+  white-space: nowrap; letter-spacing: 0.25px;
+}
+.gnb-corp-btn:hover { background: #f4f4f5; }
+
+/* ── Page Wrapper ────────────────────────────────── */
+.page-container { max-width: 1440px; margin: 0 auto; padding: 0 80px; }
+.content-start  { padding-top: 36px; }
+
+/* ── Shortcut Section ────────────────────────────── */
+.shortcuts-wrap { padding: 24px 20px 12px; }
+.shortcuts-list { display: flex; }
+.shortcut-item {
+  width: 117.78px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  gap: 10px; overflow: hidden;
+}
+.shortcut-icon-wrap { position: relative; }
+.shortcut-icon {
+  width: 56px; height: 56px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.shortcut-icon img { width: 100%; height: 100%; object-fit: contain; }
+.shortcut-badge {
+  position: absolute; top: 0; right: -6px;
+  background: #0066ff; color: #fff;
+  font-size: 11px; font-weight: 600; line-height: 1.273;
+  padding: 2px 5px; border-radius: 99px;
+  border: 1.2px solid #fff; white-space: nowrap;
+  letter-spacing: 0.34px;
+}
+.shortcut-label {
+  font-size: 13px; font-weight: 500; color: rgba(55,56,60,0.61);
+  text-align: center; letter-spacing: 0.25px; line-height: 1.385;
+  white-space: nowrap;
+}
+
+/* 직군별 연봉 — CSS bar chart icon */
+.salary-bars {
+  width: 56px; height: 56px;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 8px 6px 8px;
+  gap: 3px;
+}
+.salary-bar {
+  flex: 1; border-radius: 2px 2px 0 0;
+  background: linear-gradient(to bottom, #1cd6a9, #17c198);
+}
+
+/* ── Section Common ──────────────────────────────── */
+.section { padding: 0 20px; margin-bottom: 64px; }
+.section-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 20px; min-height: 30px;
+}
+.section-title {
+  font-size: 22px; font-weight: 600; color: #000;
+  letter-spacing: -0.43px; line-height: 1.364;
+}
+.section-trailing { display: flex; align-items: center; gap: 20px; }
+.section-more-btn {
+  font-size: 14px; font-weight: 600; color: rgba(55,56,60,0.61);
+  letter-spacing: 0.2px; padding: 4px 0;
+}
+.section-more-btn:hover { color: #171719; }
+.section-nav-btns {
+  display: flex; align-items: center;
+  border: 1px solid rgba(112,115,124,0.16); border-radius: 10px;
+  overflow: hidden;
+}
+.section-nav-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; padding: 7px;
+  color: #989ba2; transition: background 0.15s;
+}
+.section-nav-btn:hover { background: #f4f4f5; }
+.section-nav-btn svg { width: 18px; height: 18px; }
+
+/* ── Job Card (Card/Card) ────────────────────────── */
+.card-grid { display: flex; gap: 20px; align-items: flex-start; }
+.job-card {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.job-card-thumb {
+  position: relative; border-radius: 12px; overflow: hidden;
+  aspect-ratio: 3/2;
+  border: 1px solid rgba(112,115,124,0.08);
+}
+.job-card-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+}
+.job-card-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 14px;
+}
+.job-card-badge {
+  font-size: 13px; font-weight: 600; color: #fff;
+  text-shadow: 0 0 12px rgba(0,0,0,0.16);
+  letter-spacing: 0.25px; line-height: 1.385;
+}
+.job-card-bookmark { width: 24px; height: 24px; flex-shrink: 0; }
+.job-card-bookmark img { width: 100%; height: 100%; }
+.job-card-info { display: flex; flex-direction: column; gap: 6px; padding: 0 6px; }
+.job-card-title {
+  font-size: 16px; font-weight: 600; color: #171719;
+  letter-spacing: 0.09px; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.job-card-company {
+  font-size: 13px; font-weight: 500; color: rgba(55,56,60,0.61);
+  letter-spacing: 0.25px; line-height: 1.385;
+}
+.job-card-ai {
+  display: inline-flex; align-items: center;
+  padding: 3px 6px; border-radius: 6px;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.34px; line-height: 1.273;
+  align-self: flex-start;
+  background: rgba(0,152,178,0.08);
+}
+
+/* ── Featured Thumbnail Cards ────────────────────── */
+.featured-grid { display: flex; gap: 20px; }
+.featured-card {
+  flex: 1; position: relative;
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(112,115,124,0.08);
+  cursor: pointer;
+}
+.featured-card-inner { padding-top: 66.667%; position: relative; }
+.featured-bg {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+}
+.featured-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+}
+.featured-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 24px 24px; color: #fff;
+}
+.featured-title {
+  font-size: 20px; font-weight: 600; line-height: 1.4;
+  letter-spacing: -1.2px; margin-bottom: 6px;
+}
+.featured-sub {
+  font-size: 14px; font-weight: 400; line-height: 1.429;
+  opacity: 0.8; letter-spacing: 0.2px;
+}
+
+/* ── Company Cards ───────────────────────────────── */
+.company-grid { display: flex; gap: 20px; }
+.company-card {
+  flex: 1; min-width: 0;
+  border: 1px solid rgba(112,115,124,0.08);
+  border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.company-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.company-thumb { aspect-ratio: 2/1; overflow: hidden; }
+.company-thumb-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #e1e2e4 0%, #f4f4f5 100%);
+}
+.company-info { padding: 16px 20px 20px; }
+.company-title {
+  font-size: 16px; font-weight: 600; color: #171719;
+  letter-spacing: 0.09px; line-height: 1.5; margin-bottom: 4px;
+}
+.company-sub {
+  font-size: 13px; font-weight: 500; color: rgba(55,56,60,0.61);
+  letter-spacing: 0.25px; line-height: 1.385;
+}
+
+/* ── List Cards ──────────────────────────────────── */
+.listcard-grid { display: flex; gap: 20px; }
+.listcard-col   { flex: 1; display: flex; flex-direction: column; gap: 0; }
+.listcard {
+  display: flex; align-items: center; gap: 12px;
+  height: 80px; padding: 12px 4px;
+  border-bottom: 1px solid rgba(112,115,124,0.08);
+  cursor: pointer;
+}
+.listcard:hover .listcard-title { color: #0066ff; }
+.listcard-logo {
+  width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+  overflow: hidden; border: 1px solid rgba(112,115,124,0.08);
+  background: linear-gradient(135deg, #e1e2e4, #f4f4f5);
+}
+.listcard-logo img { width: 100%; height: 100%; object-fit: cover; }
+.listcard-info { flex: 1; min-width: 0; }
+.listcard-title {
+  font-size: 14px; font-weight: 600; color: #171719;
+  letter-spacing: 0.2px; line-height: 1.429; margin-bottom: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.listcard-company {
+  font-size: 13px; font-weight: 500; color: rgba(55,56,60,0.61);
+  letter-spacing: 0.25px; line-height: 1.385;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.listcard-save {
+  flex-shrink: 0; color: rgba(55,56,60,0.28);
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Footer ──────────────────────────────────────── */
+.footer {
+  background: #f7f7f8;
+  border-top: 1px solid rgba(112,115,124,0.16);
+  padding: 40px 0 48px;
+  margin-top: 80px;
+}
+.footer-inner { max-width: 1440px; margin: 0 auto; padding: 0 100px; }
+.footer-logo { margin-bottom: 20px; }
+.footer-logo img { height: 20px; width: auto; opacity: 0.5; }
+.footer-links {
+  display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 20px;
+}
+.footer-links a {
+  font-size: 13px; font-weight: 500; color: rgba(55,56,60,0.61);
+  letter-spacing: 0.25px;
+}
+.footer-links a:hover { color: #171719; }
+.footer-divider { height: 1px; background: rgba(112,115,124,0.16); margin: 20px 0; }
+.footer-corp {
+  font-size: 12px; color: rgba(55,56,60,0.28);
+  line-height: 1.8; letter-spacing: 0.3px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ GNB ═══════════════════════════════════════ -->
+<header class="gnb">
+  <div class="gnb-inner">
+    <div class="gnb-leading">
+      <!-- Logo -->
+      <a href="#" class="gnb-logo">
+        <img class="gnb-logo-symbol"
+             src="https://www.figma.com/api/mcp/asset/33bb066b-2bab-4292-8cc4-c913ab6fd4cf"
+             alt="wanted symbol">
+        <img class="gnb-logo-type"
+             src="https://www.figma.com/api/mcp/asset/db493828-2cf1-43d7-8663-20f7d349d4e4"
+             alt="wanted">
+      </a>
+      <!-- Nav -->
+      <nav class="gnb-nav">
+        <a href="#" class="gnb-nav-item">
+          <img class="gnb-nav-icon"
+               src="https://www.figma.com/api/mcp/asset/e341d36b-b011-4c14-95f1-5ec6e31edb71"
+               alt="">
+          채용
+        </a>
+        <a href="#" class="gnb-nav-item">이력서</a>
+        <a href="#" class="gnb-nav-item">교육•이벤트</a>
+        <a href="#" class="gnb-nav-item">콘텐츠</a>
+        <a href="#" class="gnb-nav-item">소셜</a>
+        <a href="#" class="gnb-nav-item">프리랜서</a>
+        <a href="#" class="gnb-nav-item">더보기</a>
+      </nav>
+    </div>
+    <!-- Trailing -->
+    <div class="gnb-trailing">
+      <div class="gnb-actions">
+        <button class="gnb-icon-btn" aria-label="검색">
+          <img src="https://www.figma.com/api/mcp/asset/1125e165-8c00-45f2-8eac-e2adf5c832ff" alt="검색">
+        </button>
+        <button class="gnb-icon-btn" aria-label="알림">
+          <img src="https://www.figma.com/api/mcp/asset/7be8de10-e4bd-4154-a439-b01196df6335" alt="알림">
+        </button>
+        <div class="gnb-avatar">
+          <img src="https://www.figma.com/api/mcp/asset/6610550a-f3cb-4690-8293-ed6a2ae8e734" alt="프로필">
+        </div>
+      </div>
+      <button class="gnb-corp-btn">기업 서비스</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ══════════════════════════════════════ -->
+<main>
+<div class="page-container">
+<div class="content-start">
+
+  <!-- ── 바로가기 ─────────────────────────────────── -->
+  <div class="shortcuts-wrap">
+    <div class="shortcuts-list">
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/50bcb259-4f22-4bcc-9281-474142078f63" alt="채용공고">
+        </div>
+        <span class="shortcut-label">채용 공고</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon" style="padding:3px">
+          <img src="https://www.figma.com/api/mcp/asset/980185ba-ffad-4242-97f0-91a4209b1341" alt="이력서코칭">
+        </div>
+        <span class="shortcut-label">이력서 코칭</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/4d2e2ad6-0ad8-4ade-a88c-263c95e630f2" alt="이력서관리">
+        </div>
+        <span class="shortcut-label">이력서 관리</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/fc80002f-12c4-41b3-9119-1c8ebdc24926" alt="커리어조회">
+        </div>
+        <span class="shortcut-label">커리어 조회</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/44a20ac3-b85e-480c-8684-a6b1339e8675" alt="지원현황">
+        </div>
+        <span class="shortcut-label">지원 현황</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon-wrap">
+          <div class="shortcut-icon">
+            <img src="https://www.figma.com/api/mcp/asset/700f8411-f366-463b-aa8d-2f253d1010d0" alt="면접제안">
+          </div>
+          <span class="shortcut-badge">99+</span>
+        </div>
+        <span class="shortcut-label">면접 제안</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/c41f492f-122e-427a-9655-aa4d637b7718" alt="면접코칭">
+        </div>
+        <span class="shortcut-label">면접 코칭받기</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/6e3bf3cf-a9b2-4463-b036-73b3cd3d32c0" alt="북마크">
+        </div>
+        <span class="shortcut-label">북마크</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="salary-bars">
+          <div class="salary-bar" style="height:50%"></div>
+          <div class="salary-bar" style="height:80%;background:linear-gradient(to bottom,#1cd6a9,#17c198)"></div>
+          <div class="salary-bar" style="height:35%;background:linear-gradient(to bottom,#5de0c1,#50d2b3)"></div>
+          <div class="salary-bar" style="height:65%;background:linear-gradient(to bottom,#5de0c1,#50d2b3)"></div>
+          <div class="salary-bar" style="height:70%"></div>
+        </div>
+        <span class="shortcut-label">직군별 연봉</span>
+      </a>
+
+      <a href="#" class="shortcut-item">
+        <div class="shortcut-icon">
+          <img src="https://www.figma.com/api/mcp/asset/7e87f577-1d1b-45a4-81e7-32cf6b687f24" alt="원티드추천기업">
+        </div>
+        <span class="shortcut-label">원티드 추천 기업</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ── Section 1: 합격 가능성 높은 포지션 ────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">합격 가능성 높은 포지션</h2>
+      <div class="section-trailing">
+        <button class="section-more-btn">전체보기</button>
+        <div class="section-nav-btns">
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 13.5L6.5 9 11 4.5"/>
+            </svg>
+          </button>
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 4.5L11.5 9 7 13.5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <article class="job-card">
+        <div class="job-card-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/63632b21-5e10-4dc5-8492-15bda60b63df" alt="[Gopax] UI/UX 디자이너">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">[Gopax] UI/UX 디자이너</p>
+          <p class="job-card-company">스트리미(Streami)</p>
+          <span class="job-card-ai" style="color:#008dcf">AI 예측 86점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/4be495f4-791d-4e40-952e-c3d03061afb0" alt="UX/UI Designer">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">UX/UI Designer</p>
+          <p class="job-card-company">에임(AIM)</p>
+          <span class="job-card-ai" style="color:#009632">AI 예측 96점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/432807ca-459c-4d29-bd7a-32859bd4d498" alt="UI/UX 디자이너 (게임 커뮤니티)">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">UI/UX 디자이너 (게임 커뮤니티)</p>
+          <p class="job-card-company">고픽커뮤니케이션</p>
+          <span class="job-card-ai" style="color:#005eeb">AI 예측 71점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/5cc90379-01b4-4cc5-b38b-09958663afb8" alt="Senior Design Manager">
+          <div class="job-card-overlay">
+            <span class="job-card-badge" style="line-height:1.5">합격보상금 100만원<br>Moonshot · 일본 현지 채용</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">[キャディ] Senior Design Manager · 근무지 일본</p>
+          <p class="job-card-company">디오비스튜디오</p>
+          <span class="job-card-ai" style="color:#5b37ed">AI 예측 65점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/83ed3a3f-290a-4dca-9377-ee9a2eec4a46" alt="Senior Product Designer">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">Senior Product Designer</p>
+          <p class="job-card-company">루닛케어</p>
+          <span class="job-card-ai" style="color:#5b37ed">AI 예측 61점</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ── Section 2: 지금 뜨는 기업 ─────────────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">지금 뜨는 기업</h2>
+      <div class="section-trailing">
+        <button class="section-more-btn">전체보기</button>
+        <div class="section-nav-btns">
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13.5L6.5 9 11 4.5"/></svg>
+          </button>
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5L11.5 9 7 13.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="featured-grid">
+
+      <div class="featured-card">
+        <div class="featured-card-inner">
+          <div class="featured-bg" style="background:linear-gradient(135deg,#0d1b3e 0%,#1a3461 60%,#0a2550 100%)"></div>
+          <div class="featured-gradient"></div>
+          <div class="featured-content">
+            <p class="featured-title">3D엔진 개발 담당자 채용</p>
+            <p class="featured-sub">2년 연속 CES가 선정한 혁신기업</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="featured-card">
+        <div class="featured-card-inner">
+          <div class="featured-bg" style="background:linear-gradient(135deg,#0e2d1f 0%,#1a5e3b 60%,#0d3020 100%)"></div>
+          <div class="featured-gradient"></div>
+          <div class="featured-content">
+            <p class="featured-title">모두닥 그로스 마케터 채용</p>
+            <p class="featured-sub">압도적인 동료를 찾습니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="featured-card">
+        <div class="featured-card-inner">
+          <div class="featured-bg" style="background:linear-gradient(135deg,#0a1628 0%,#1c3a5f 60%,#0d2037 100%)"></div>
+          <div class="featured-gradient"></div>
+          <div class="featured-content">
+            <p class="featured-title">미리 미리 탑승하자</p>
+            <p class="featured-sub">글로벌 진출과 IPO 티켓 준비 완료</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Section 3: 테마별 채용 기업 ───────────────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">테마별 채용 기업</h2>
+      <div class="section-trailing">
+        <div class="section-nav-btns">
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13.5L6.5 9 11 4.5"/></svg>
+          </button>
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5L11.5 9 7 13.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="company-grid">
+
+      <div class="company-card">
+        <div class="company-thumb">
+          <div class="company-thumb-placeholder" style="background:linear-gradient(135deg,#ccd9f0 0%,#a8c0e8 100%)"></div>
+        </div>
+        <div class="company-info">
+          <p class="company-title">지금 대규모 채용 중</p>
+          <p class="company-sub">대규모 채용 중</p>
+        </div>
+      </div>
+
+      <div class="company-card">
+        <div class="company-thumb">
+          <div class="company-thumb-placeholder" style="background:linear-gradient(135deg,#d4e8d0 0%,#b0d4aa 100%)"></div>
+        </div>
+        <div class="company-info">
+          <p class="company-title">인재 채용에 진심인 기업</p>
+          <p class="company-sub">적극 채용 중</p>
+        </div>
+      </div>
+
+      <div class="company-card">
+        <div class="company-thumb">
+          <div class="company-thumb-placeholder" style="background:linear-gradient(135deg,#f0e6cc 0%,#e8d4a0 100%)"></div>
+        </div>
+        <div class="company-info">
+          <p class="company-title">재택근무 포지션을 원한다면</p>
+          <p class="company-sub">재택근무</p>
+        </div>
+      </div>
+
+      <div class="company-card">
+        <div class="company-thumb">
+          <div class="company-thumb-placeholder" style="background:linear-gradient(135deg,#f0d0cc 0%,#e8b4ae 100%)"></div>
+        </div>
+        <div class="company-info">
+          <p class="company-title">100억 이상 투자 기업</p>
+          <p class="company-sub">누적투자 100억 이상</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Section 4: 이 분야도 살펴보세요 (card grid 2) -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">이 분야도 살펴보세요</h2>
+      <div class="section-trailing">
+        <button class="section-more-btn">전체보기</button>
+        <div class="section-nav-btns">
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13.5L6.5 9 11 4.5"/></svg>
+          </button>
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5L11.5 9 7 13.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#f0f0f4,#e4e4ec)"></div>
+        <div class="job-card-info">
+          <p class="job-card-title">iOS Engineer</p>
+          <p class="job-card-company">토스뱅크</p>
+          <span class="job-card-ai" style="color:#009632">AI 예측 92점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#e8f0f8,#d0e0f0)"></div>
+        <div class="job-card-info">
+          <p class="job-card-title">백엔드 개발자 (Java/Spring)</p>
+          <p class="job-card-company">카카오페이</p>
+          <span class="job-card-ai" style="color:#009632">AI 예측 88점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#f8f0e8,#f0e0d0)"></div>
+        <div class="job-card-info">
+          <p class="job-card-title">Frontend Engineer (React)</p>
+          <p class="job-card-company">당근마켓</p>
+          <span class="job-card-ai" style="color:#008dcf">AI 예측 79점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#f0f8f0,#d8eed8)"></div>
+        <div class="job-card-info">
+          <p class="job-card-title">Data Engineer</p>
+          <p class="job-card-company">네이버클라우드</p>
+          <span class="job-card-ai" style="color:#008dcf">AI 예측 74점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#f8f0f8,#eed8ee)"></div>
+        <div class="job-card-info">
+          <p class="job-card-title">DevOps Engineer</p>
+          <p class="job-card-company">쿠팡</p>
+          <span class="job-card-ai" style="color:#005eeb">AI 예측 68점</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ── Section 5: 최신 채용공고 (list cards) ──────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">최신 채용공고</h2>
+      <div class="section-trailing">
+        <button class="section-more-btn">전체보기</button>
+      </div>
+    </div>
+    <div class="listcard-grid">
+
+      <!-- Column 1 -->
+      <div class="listcard-col">
+        <div class="listcard">
+          <div class="listcard-logo"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">Product Manager, B2B SaaS</p>
+            <p class="listcard-company">스캐터랩 · 서울 강남</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="listcard">
+          <div class="listcard-logo"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">Android Developer (Kotlin)</p>
+            <p class="listcard-company">하이퍼커넥트 · 서울 강남</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="listcard">
+          <div class="listcard-logo"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">ML Engineer / AI Researcher</p>
+            <p class="listcard-company">업스테이지 · 서울 강남</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2 -->
+      <div class="listcard-col">
+        <div class="listcard">
+          <div class="listcard-logo" style="background:linear-gradient(135deg,#d8e8f8,#c0d8f0)"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">SRE / Cloud Infrastructure Engineer</p>
+            <p class="listcard-company">라인플러스 · 성남 분당</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="listcard">
+          <div class="listcard-logo" style="background:linear-gradient(135deg,#f8e8d8,#f0d0b8)"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">Software Engineer, Platform</p>
+            <p class="listcard-company">버킷플레이스 · 서울 서초</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="listcard">
+          <div class="listcard-logo" style="background:linear-gradient(135deg,#d8f8e8,#b8f0d0)"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">Security Engineer</p>
+            <p class="listcard-company">크래프톤 · 서울 강남</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3 -->
+      <div class="listcard-col">
+        <div class="listcard">
+          <div class="listcard-logo" style="background:linear-gradient(135deg,#f8d8f8,#f0b8f0)"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">UX Researcher</p>
+            <p class="listcard-company">컬리 · 서울 강남</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="listcard">
+          <div class="listcard-logo" style="background:linear-gradient(135deg,#f8f8d8,#f0f0b8)"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">Full-Stack Engineer (Node.js + React)</p>
+            <p class="listcard-company">직방 · 서울 강남</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="listcard">
+          <div class="listcard-logo" style="background:linear-gradient(135deg,#d8d8f8,#b8b8f0)"></div>
+          <div class="listcard-info">
+            <p class="listcard-title">QA Engineer (Automation)</p>
+            <p class="listcard-company">무신사 · 서울 성동</p>
+          </div>
+          <div class="listcard-save">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Section 6: 오늘의 추천 (card grid 3) ─────── -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">오늘의 추천</h2>
+      <div class="section-trailing">
+        <button class="section-more-btn">전체보기</button>
+        <div class="section-nav-btns">
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 13.5L6.5 9 11 4.5"/></svg>
+          </button>
+          <button class="section-nav-btn">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4.5L11.5 9 7 13.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-grid">
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#e8f4ff,#c8e4ff)">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">AI/ML Research Engineer</p>
+          <p class="job-card-company">네이버랩스</p>
+          <span class="job-card-ai" style="color:#009632">AI 예측 91점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#fff4e8,#ffe4c8)">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">Product Designer (Web & Mobile)</p>
+          <p class="job-card-company">비바리퍼블리카</p>
+          <span class="job-card-ai" style="color:#009632">AI 예측 89점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#f4ffe8,#e4ffc8)">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">Blockchain Developer (Rust)</p>
+          <p class="job-card-company">카이아</p>
+          <span class="job-card-ai" style="color:#008dcf">AI 예측 77점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#ffe8f4,#ffc8e4)">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">Growth Marketing Manager</p>
+          <p class="job-card-company">야놀자</p>
+          <span class="job-card-ai" style="color:#005eeb">AI 예측 70점</span>
+        </div>
+      </article>
+
+      <article class="job-card">
+        <div class="job-card-thumb" style="background:linear-gradient(135deg,#f4e8ff,#e4c8ff)">
+          <div class="job-card-overlay">
+            <span class="job-card-badge">합격보상금 100만원</span>
+            <div class="job-card-bookmark">
+              <img src="https://www.figma.com/api/mcp/asset/4057ce7a-4943-41db-a142-120cd236b20e" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="job-card-info">
+          <p class="job-card-title">CTO / Engineering Lead</p>
+          <p class="job-card-company">매스프레소</p>
+          <span class="job-card-ai" style="color:#5b37ed">AI 예측 63점</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</div>
+</div>
+</main>
+
+<!-- ═══ FOOTER ═════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="https://www.figma.com/api/mcp/asset/db493828-2cf1-43d7-8663-20f7d349d4e4" alt="wanted">
+    </div>
+    <div class="footer-links">
+      <a href="#">서비스 이용약관</a>
+      <a href="#">개인정보 처리방침</a>
+      <a href="#">고객센터</a>
+      <a href="#">원티드 소개</a>
+      <a href="#">채용 담당자 서비스</a>
+      <a href="#">프리랜서 서비스</a>
+      <a href="#">기업 블로그</a>
+    </div>
+    <div class="footer-divider"></div>
+    <p class="footer-corp">
+      주식회사 원티드랩 | 대표이사 이복기 | 서울특별시 중구 청계천로 14, 14층<br>
+      사업자등록번호: 123-45-67890 | 직업정보제공사업 신고번호: J1234560001<br>
+      통신판매업: 제2020-서울중구-0000호 | 유료직업소개사업: 제2020-3010160-14-5-00018호<br>
+      Copyright © Wantedlab, Inc. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
